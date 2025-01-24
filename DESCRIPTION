@@ -1,9 +1,9 @@
 Package: aiddataviz
-Title: What the Package Does (One Line, Title Case)
+Title: Data Visualization Themes and Tools for AidData
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Teal", "Emery", , "lte@tealinsights.com", role = c("aut", "cre"))
+Description: Provides tools, themes, and color palettes for creating consistent, accessible, and on-brand data visualizations using 'ggplot2'. Built for AidData at the College of William & Mary, this package implements the official William & Mary brand guidelines while adhering to data visualization best practices. Features include custom ggplot2 themes, color palettes optimized for accessibility, and functions for creating publication-ready visualizations.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
