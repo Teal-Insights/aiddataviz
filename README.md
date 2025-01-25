@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/Teal-Insights/aiddataviz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Teal-Insights/aiddataviz/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/Teal-Insights/aiddataviz/graph/badge.svg)](https://app.codecov.io/gh/Teal-Insights/aiddataviz)
 <!-- badges: end -->
 
 The goal of aiddataviz is to …
@@ -24,7 +27,7 @@ pak::pak("Teal-Insights/aiddataviz")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-#library(aiddataviz)
+# library(aiddataviz)
 ## basic example code
 ```
 
