@@ -16,7 +16,8 @@ scale_fill_aiddata(palette = "default", reverse = FALSE, discrete = TRUE, ...)
 
 \item{reverse}{Boolean indicating whether to reverse the palette}
 
-\item{discrete}{Boolean indicating whether the scale is discrete or continuous}
+\item{discrete}{Boolean indicating whether the scale is discrete or
+continuous}
 
 \item{...}{Additional arguments passed to discrete_scale() or
 scale_color_gradientn()}

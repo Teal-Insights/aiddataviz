@@ -81,11 +81,19 @@ test_that("color scales handle reverse parameter", {
 })
 
 test_that("scales work with different ggplot2 versions", {
+
+  # Skip this test on older R versions that don't have local_mocked_bindings
+  if (!exists("local_mocked_bindings", asNamespace("testthat"))) {
+    skip("local_mocked_bindings not available")
+  }
+
   # Test with old version
+  withr::local_envvar(old = Sys.getenv("GGPLOT2_VERSION"))
   testthat::local_mocked_bindings(
     get_ggplot2_version = function() package_version("3.4.9"),
     .env = environment(scale_color_aiddata)
   )
+
   # Suppress warning about deprecated scale_name since it's expected
   suppressWarnings({
     old_scale <- scale_color_aiddata("default")
