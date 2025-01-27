@@ -3,5 +3,6 @@
 export(add_numbers)
 export(aiddata_colors)
 export(aiddata_palettes)
+export(get_ggplot2_version)
 export(scale_color_aiddata)
 export(scale_fill_aiddata)

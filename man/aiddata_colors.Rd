@@ -16,32 +16,6 @@ aiddata_colors
 aiddata_palettes
 }
 \description{
-Defines the official William & Mary brand colors as used by AidData and provides
-color scales for use in ggplot2 visualizations.
+AidData color system based on William & Mary brand guidelines
 }
-\section{Primary Colors}{
-
-The primary William & Mary colors form the core of the brand identity:
-\itemize{
-\item Wren Twilight (#00313C)
-\item Vine (#84344E)
-\item Patina (#00B388)
-\item Spirit Gold (#F0B323)
-\item Silver (#D0DED4)
-}
-}
-
-\section{Color Palettes}{
-
-Several pre-defined palettes are available:
-\itemize{
-\item default: Primary W&M colors
-\item alt: Alternative combo of secondary/tertiary colors
-\item sequential_green: Green-based sequential scale
-\item sequential_gold: Gold-based sequential scale
-\item diverging_green_gold: Green to gold diverging scale
-\item diverging_vine_sky: Vine to sky blue diverging scale
-}
-}
-
 \keyword{datasets}

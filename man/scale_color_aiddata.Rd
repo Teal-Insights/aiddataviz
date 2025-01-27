@@ -3,7 +3,7 @@
 \name{scale_color_aiddata}
 \alias{scale_color_aiddata}
 \alias{scale_fill_aiddata}
-\title{Create an AidData color scale}
+\title{Create AidData color scales}
 \usage{
 scale_color_aiddata(palette = "default", reverse = FALSE, discrete = TRUE, ...)
 
@@ -25,11 +25,11 @@ scale_color_gradientn()}
 A ggplot2 color scale
 }
 \description{
-Create an AidData color scale
+Create AidData color scales
 }
 \examples{
 library(ggplot2)
 ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point() +
-  scale_color_aiddata()
+  scale_color_aiddata("default")
 }
