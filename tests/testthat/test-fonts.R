@@ -1,74 +1,13 @@
 # tests/testthat/test-fonts.R
 
-test_that("get_available_font returns appropriate fallback", {
+test_that("font_hoist works for available fonts", {
+  # Mock systemfonts::system_fonts() to return Roboto
   local_mocked_bindings(
     system_fonts = function() {
       data.frame(
-        family = c("Arial", "Times New Roman"),
-        style = c("Regular", "Regular"),
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
-
-  expect_equal(
-    get_available_font("Open Sans", fallbacks = c("Arial", "Helvetica")),
-    "Arial"
-  )
-
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = character(0),
-        style = character(0),
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
-
-  expect_equal(
-    get_available_font("Open Sans", fallbacks = c("Arial", "Helvetica")),
-    "sans"
-  )
-})
-
-test_that("install_aiddata_fonts handles non-interactive mode", {
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = "Arial",  # Missing both required fonts
+        family = "Roboto",
         style = "Regular",
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
-
-  # Force non-interactive mode
-  withr::local_options(list(interactive = FALSE))
-
-  # Capture and test output
-  expect_message(
-    result <- install_aiddata_fonts(),
-    "manually install"
-  )
-  expect_false(result)
-})
-
-test_that("install_aiddata_fonts handles interactive install", {
-  skip_on_ci()
-
-  temp_dir <- tempdir()
-  test_zip <- file.path(temp_dir, "Roboto.zip")
-
-  # Mock system fonts
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = "Arial",  # Missing both required fonts
-        style = "Regular",
+        path = "/path/to/Roboto-Regular.ttf",
         stringsAsFactors = FALSE
       )
     },
@@ -76,32 +15,60 @@ test_that("install_aiddata_fonts handles interactive install", {
     .package = "systemfonts"
   )
 
-  # Mock download functions
+  result <- font_hoist("Roboto", check_only = TRUE)
+  expect_true(result$available)
+  expect_equal(nrow(result$specs), 1)
+})
+
+test_that("font_hoist handles missing fonts", {
+  # Mock systemfonts::system_fonts() to return no fonts
   local_mocked_bindings(
-    download.file = function(url, destfile, ...) {
-      expect_match(url, "fonts.google.com")
-      file.create(destfile)
-      0
+    system_fonts = function() {
+      data.frame(
+        family = character(0),
+        style = character(0),
+        path = character(0),
+        stringsAsFactors = FALSE
+      )
     },
-    unzip = function(zipfile, ...) {
-      ttf_path <- file.path(temp_dir, "Roboto-Regular.ttf")
-      file.create(ttf_path)
-      ttf_path
-    },
-    .package = "utils"
+    .package = "systemfonts"
   )
-
-  # Force interactive mode and mock readline
-  withr::local_options(list(interactive = TRUE))
-
-  # Use mockery to mock base::readline
-  mockery::stub(install_aiddata_fonts, "readline", function(...) "y")
 
   expect_message(
-    result <- install_aiddata_fonts(),
-    "Installing fonts"
+    result <- font_hoist("NonexistentFont"),
+    "No fonts found"
   )
-  expect_true(result)
+  expect_false(result$available)
+})
 
-  unlink(test_zip)
+test_that(".check_fonts detects missing required fonts", {
+  # Mock systemfonts::system_fonts() to return only Roboto
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = "Roboto",
+        style = "Regular",
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "systemfonts"
+  )
+
+  expect_false(.check_fonts())
+})
+
+test_that(".check_fonts detects all required fonts", {
+  # Mock systemfonts::system_fonts() to return both required fonts
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = c("Roboto", "Open Sans"),
+        style = c("Regular", "Regular"),
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "systemfonts"
+  )
+
+  expect_true(.check_fonts())
 })

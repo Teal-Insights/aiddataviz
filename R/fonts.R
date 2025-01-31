@@ -1,103 +1,79 @@
 # R/fonts.R
 
-#' Check if required AidData fonts are installed
+#' Make font families available in ggplot2
 #'
-#' @param required_fonts Character vector of font families to check.
-#' @return Logical TRUE/FALSE whether all required fonts are available
-#' @keywords internal
-.check_fonts <- function(required_fonts = c("Roboto", "Open Sans")) {
-  available <- unique(systemfonts::system_fonts()$family)
-  all(required_fonts %in% available)
-}
-
-#' Provide an available font (or fallback) from a vector of desired families
+#' Sometimes, even when fonts are loaded on a computer, they are not
+#' immediately available for use in R. This function fixes that.
 #'
-#' @param font_family The primary font family you want to use.
-#' @param fallbacks A character vector of fallback fonts to try in order.
-#' @return A single string which is the first available font family or "sans" if none found.
+#' @param family_name name of the font family.
+#' @param silent do you want to suppress the message?
+#' @param check_only logical. If TRUE, only checks if fonts are available
+#'   without attempting to register them.
+#'
+#' @return The function returns a message indicating whether the font
+#'   was successfully loaded or not.
 #' @export
-get_available_font <- function(font_family, fallbacks = c("Arial", "Helvetica", "sans")) {
-  all_fonts <- systemfonts::system_fonts()$family
-  if (font_family %in% all_fonts) {
-    return(font_family)
-  }
-  for (fallback in fallbacks) {
-    if (fallback %in% all_fonts) {
-      return(fallback)
-    }
-  }
-  # If none of the desired fonts are installed, return "sans"
-  "sans"
-}
-
-# R/fonts.R
-
-install_aiddata_fonts <- function() {
-  required_fonts <- c("Roboto", "Open Sans")
-
-  # If fonts are already installed, do nothing:
-  if (.check_fonts(required_fonts)) {
-    message("All AidData fonts are already installed.")
-    return(TRUE)
-  }
-
-  # If not interactive, just print a notice and quit:
-  if (!interactive()) {
-    missing_fonts <- required_fonts[!required_fonts %in% systemfonts::system_fonts()$family]
-    message(
-      "The following fonts are missing and required for AidData themes:\n",
-      paste("-", missing_fonts, collapse = "\n"),
-      "\nPlease install these fonts manually or run install_aiddata_fonts() in an interactive session."
-    )
-    return(FALSE)
-  }
-
-  # ------------------------------------------------------------------
-  # ADD THIS GUARD: Skip the prompt if loaded by 'pkgload' or if TESTTHAT is set
-  # (devtools::test(), devtools::load_all(), R CMD check, etc.)
-  # ------------------------------------------------------------------
-  if ("pkgload" %in% loadedNamespaces() || nzchar(Sys.getenv("TESTTHAT"))) {
-    # You can optionally show a small message if you like, or just quietly skip.
-    message("Skipping font installation prompt under devtools/test environment.")
-    return(FALSE)
-  }
-
-  # Now we do the real interactive prompt for normal users:
-  missing_fonts <- required_fonts[!required_fonts %in% systemfonts::system_fonts()$family]
-  message("The following fonts are missing and required for AidData themes:")
-  message(paste("-", missing_fonts, collapse = "\n"))
-
-  ans <- readline("Would you like to install these fonts now? (y/n) ")
-  if (tolower(ans) != "y") {
-    message("User declined font installation. You can install them manually or run install_aiddata_fonts() again.")
-    return(FALSE)
-  }
-
-  # ... your real downloading/installation logic ...
-  message("Installing fonts from Google Fonts...")
-  # e.g. download, unzip, register, etc.
-
-  message("Fonts installed successfully.")
-  return(TRUE)
-}
-
-#' Package startup: check fonts unless loaded by devtools/pkgload
 #'
-#' This runs when the package is attached via `library(aiddataviz}`.
-#' We skip the check if `pkgload` is managing the package (i.e. devtools::load_all or devtools::test).
-.onAttach <- function(libname, pkgname) {
+#' @examples
+#' # load Roboto (must be loaded from Google Fonts on system already)
+#' font_hoist("Roboto")
+#'
+font_hoist <- function(family_name, silent = FALSE, check_only = FALSE) {
 
-  # If devtools/pkgload is loading this in an interactive session, skip the font check.
-  # That prevents prompting the developer/tester unnecessarily.
-  if ("pkgload" %in% loadedNamespaces()) {
-    return()
+  # Fetch all system fonts using the systemfonts package
+  font_specs <- systemfonts::system_fonts() |>
+    dplyr::filter(family == family_name) |>
+    dplyr::mutate(family = paste(family, style)) |>
+    dplyr::select(plain = path, name = family)
+
+  # Check if any fonts were found for the given family name
+  if (nrow(font_specs) == 0) {
+    if (!silent) {
+      message(paste0(
+        "No fonts found for the family '", family_name, "'. \n",
+        "Make sure that the font is downloaded to your computer."
+      ))
+    }
+    return(list(specs = NULL, available = FALSE))
   }
 
-  # Normal interactive attach: Check fonts & message if missing
-  if (interactive() && !.check_fonts()) {
+  if (check_only) {
+    return(list(specs = font_specs, available = TRUE))
+  }
+
+  # Define a function to safely register a font
+  safe_register_font <- function(plain, name) {
+    tryCatch({
+      systemfonts::register_font(plain = plain, name = name)
+      TRUE
+    }, error = function(e) {
+      FALSE
+    })
+  }
+
+  # Register each font
+  results <- purrr::pwalk(as.list(font_specs), safe_register_font)
+
+  # Return font specifications invisibly
+  invisible(font_specs)
+}
+
+#' Check if required fonts are installed
+#' @keywords internal
+.check_fonts <- function() {
+  required_fonts <- c("Roboto", "Open Sans")
+  all(required_fonts %in% unique(systemfonts::system_fonts()$family))
+}
+
+#' Package startup message
+#' @importFrom utils packageVersion
+.onAttach <- function(libname, pkgname) {
+  if (!.check_fonts()) {
     packageStartupMessage(
-      "Note: AidData themes require specific fonts. ",
-      "Use install_aiddata_fonts() to install them if needed."
+      "Note: The AidData theme requires the Roboto and Open Sans fonts.\n",
+      "Install them from Google Fonts: ",
+      "https://fonts.google.com/specimen/Roboto ",
+      "https://fonts.google.com/specimen/Open+Sans"
     )
   }
 }
