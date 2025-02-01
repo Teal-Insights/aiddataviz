@@ -1,5 +1,61 @@
 # tests/testthat/test-fonts.R
 
+test_that("get_available_font returns appropriate fallbacks", {
+  # Mock system fonts to only have Arial
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = "Arial",
+        style = "Regular",
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "systemfonts"
+  )
+
+  # Should return Arial when Roboto isn't available
+  expect_equal(
+    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
+    "Arial"
+  )
+
+  # Mock system fonts to have no fonts
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = character(0),
+        style = character(0),
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "systemfonts"
+  )
+
+  # Should return "sans" when no fonts are available
+  expect_equal(
+    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
+    "sans"
+  )
+})
+
+test_that("get_available_font returns requested font when available", {
+  # Mock system fonts to include Roboto
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = c("Roboto", "Arial"),
+        style = c("Regular", "Regular"),
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "systemfonts"
+  )
+
+  expect_equal(
+    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
+    "Roboto"
+  )
+})
 test_that("font_hoist works for available fonts", {
   # Mock systemfonts::system_fonts() to return Roboto
   local_mocked_bindings(

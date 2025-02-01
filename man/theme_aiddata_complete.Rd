@@ -30,12 +30,21 @@ theme_aiddata_complete(
 A list containing theme and scale elements
 }
 \description{
-A complete theme that applies both AidData's visual style and color scales
+A complete theme that applies both AidData's visual style and color scales.
+This function combines theme_aiddata() with appropriate color scales.
 }
 \examples{
+\donttest{
 library(ggplot2)
+# Set up ragg device
+ragg::agg_png(tempfile(), width = 600, height = 400, units = "px")
 
-ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+# Basic usage with color
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point() +
+  labs(title = "MPG by Weight and Cylinders") +
   theme_aiddata_complete()
+print(p)
+invisible(dev.off())
+}
 }

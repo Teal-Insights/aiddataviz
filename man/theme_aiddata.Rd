@@ -28,19 +28,21 @@ A ggplot2 theme
 }
 \description{
 A ggplot2 theme that implements William & Mary brand guidelines and is optimized
-for AidData's common visualization types.
+for AidData's common visualization types. Works best with Roboto and Open Sans fonts
+installed, but will fall back to system fonts if necessary.
 }
 \examples{
+\donttest{
 library(ggplot2)
+# Set up ragg device
+ragg::agg_png(tempfile(), width = 600, height = 400, units = "px")
 
-# Basic usage
-ggplot(mtcars, aes(wt, mpg)) +
+# Basic usage, falling back to system fonts if needed
+p <- ggplot(mtcars, aes(wt, mpg)) +
   geom_point() +
+  labs(title = "MPG vs Weight") +
   theme_aiddata()
-
-# Map optimization
-# world_map <- map_data("world")
-# ggplot(world_map, aes(long, lat, group = group)) +
-#   geom_polygon(fill = "gray90", color = "white") +
-#   theme_aiddata(map = TRUE)
+print(p)
+invisible(dev.off())
+}
 }

@@ -114,14 +114,8 @@ create_base_theme_elements <- function(base_font = "Open Sans",
 #' AidData ggplot2 theme
 #'
 #' A ggplot2 theme that implements William & Mary brand guidelines and is optimized
-#' for AidData's common visualization types. Requires the Roboto and Open Sans fonts
-#' to be installed. Use install_aiddata_fonts() to install them if needed.
-#'
-#' The theme supports rich text formatting through the ggtext package:
-#' - Use markdown formatting in titles, subtitles, and captions
-#' - Automatic text wrapping for subtitles
-#' - HTML-style text formatting (e.g., <b>bold</b>, <i>italic</i>)
-#' - Color text using hex codes (e.g., <span style='color:#00313C'>text</span>)
+#' for AidData's common visualization types. Works best with Roboto and Open Sans fonts
+#' installed, but will fall back to system fonts if necessary.
 #'
 #' @param base_font Base font family (default: "Open Sans")
 #' @param title_font Title font family (default: "Roboto")
@@ -132,35 +126,19 @@ create_base_theme_elements <- function(base_font = "Open Sans",
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' library(ggplot2)
+#' # Set up ragg device
+#' ragg::agg_png(tempfile(), width = 600, height = 400, units = "px")
 #'
-#' # Basic usage
-#' ggplot(mtcars, aes(wt, mpg)) +
+#' # Basic usage, falling back to system fonts if needed
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point() +
-#'   labs(
-#'     title = "Miles per Gallon vs Weight",
-#'     subtitle = "A demonstration of the **AidData theme** with rich text support.
-#'                 Notice how the subtitle automatically wraps to multiple lines.",
-#'     caption = "Data source: Motor Trend Magazine, 1974"
-#'   ) +
+#'   labs(title = "MPG vs Weight") +
 #'   theme_aiddata()
-#'
-#' # Color formatting example
-#' ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-#'   geom_point() +
-#'   labs(
-#'     title = "Vehicle Performance Analysis",
-#'     subtitle = sprintf(
-#'       "Comparing fuel efficiency across vehicles with
-#'       <span style='color:%s'>4</span>,
-#'       <span style='color:%s'>6</span>, and
-#'       <span style='color:%s'>8</span> cylinders",
-#'       aiddata_colors$ad_patina,
-#'       aiddata_colors$ad_spirit_gold,
-#'       aiddata_colors$ad_vine
-#'     )
-#'   ) +
-#'   theme_aiddata()
+#' print(p)
+#' invisible(dev.off())
+#' }
 theme_aiddata <- function(base_font = "Open Sans",
                           title_font = "Roboto",
                           base_size = 11,
@@ -223,11 +201,19 @@ theme_aiddata <- function(base_font = "Open Sans",
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' library(ggplot2)
+#' # Set up ragg device
+#' ragg::agg_png(tempfile(), width = 600, height = 400, units = "px")
 #'
-#' ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+#' # Basic usage with color
+#' p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
 #'   geom_point() +
+#'   labs(title = "MPG by Weight and Cylinders") +
 #'   theme_aiddata_complete()
+#' print(p)
+#' invisible(dev.off())
+#' }
 theme_aiddata_complete <- function(base_font = "Open Sans",
                                    title_font = "Roboto",
                                    base_size = 11,
