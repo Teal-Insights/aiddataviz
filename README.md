@@ -27,7 +27,7 @@ pak::pak("Teal-Insights/aiddataviz")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-# library(aiddataviz)
+#. Load library
 ## basic example code
 ```
 

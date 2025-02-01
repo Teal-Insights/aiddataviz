@@ -1,3 +1,8 @@
+#' @importFrom utils globalVariables
+utils::globalVariables("aiddata_colors")
+#' @importFrom rlang .data
+NULL
+
 #' AidData color system based on William & Mary brand guidelines
 #'
 #' @name aiddata_colors
@@ -61,7 +66,6 @@ aiddata_palettes <- list(
     aiddata_colors$ad_patina,
     aiddata_colors$ad_gray90
   ),
-
   sequential_gold = c(
     aiddata_colors$ad_spirit_gold,
     aiddata_colors$ad_colonial_yellow,
@@ -77,7 +81,6 @@ aiddata_palettes <- list(
     aiddata_colors$ad_colonial_yellow,
     aiddata_colors$ad_spirit_gold
   ),
-
   diverging_vine_sky = c(
     aiddata_colors$ad_vine,
     aiddata_colors$ad_weathered_brick,
@@ -122,7 +125,6 @@ scale_color_aiddata <- function(palette = "default",
                                 reverse = FALSE,
                                 discrete = TRUE,
                                 ...) {
-
   pal <- aiddata_palettes[[palette]]
 
   if (reverse) pal <- rev(pal)
@@ -160,7 +162,6 @@ scale_fill_aiddata <- function(palette = "default",
                                reverse = FALSE,
                                discrete = TRUE,
                                ...) {
-
   pal <- aiddata_palettes[[palette]]
 
   if (reverse) pal <- rev(pal)
