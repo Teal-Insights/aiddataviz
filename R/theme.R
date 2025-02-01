@@ -12,7 +12,6 @@ create_base_theme_elements <- function(base_font = "Open Sans",
                                        base_size = 11,
                                        colors = aiddata_colors,
                                        grid = TRUE) {
-
   # Grid lines
   grid_element <- if (grid) {
     ggplot2::element_line(color = colors$ad_gray90)
@@ -113,9 +112,10 @@ create_base_theme_elements <- function(base_font = "Open Sans",
 
 #' AidData ggplot2 theme
 #'
-#' A ggplot2 theme that implements William & Mary brand guidelines and is optimized
-#' for AidData's common visualization types. Works best with Roboto and Open Sans fonts
-#' installed, but will fall back to system fonts if necessary.
+#' A ggplot2 theme that implements William & Mary brand guidelines and is
+#' optimized for AidData's common visualization types. Works best with
+#' Roboto and Open Sans fonts installed, but will fall back to system fonts
+#' if necessary.
 #'
 #' @param base_font Base font family (default: "Open Sans")
 #' @param title_font Title font family (default: "Roboto")
@@ -144,7 +144,6 @@ theme_aiddata <- function(base_font = "Open Sans",
                           base_size = 11,
                           grid = TRUE,
                           map = FALSE) {
-
   # Get available fonts with fallbacks
   actual_base_font <- get_available_font(base_font)
   actual_title_font <- get_available_font(title_font)

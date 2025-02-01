@@ -27,9 +27,10 @@ theme_aiddata(
 A ggplot2 theme
 }
 \description{
-A ggplot2 theme that implements William & Mary brand guidelines and is optimized
-for AidData's common visualization types. Works best with Roboto and Open Sans fonts
-installed, but will fall back to system fonts if necessary.
+A ggplot2 theme that implements William & Mary brand guidelines and is
+optimized for AidData's common visualization types. Works best with
+Roboto and Open Sans fonts installed, but will fall back to system fonts
+if necessary.
 }
 \examples{
 \donttest{

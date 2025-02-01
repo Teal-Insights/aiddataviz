@@ -1,5 +1,3 @@
-# tests/testthat/test-fonts.R
-
 test_that("get_available_font returns appropriate fallbacks", {
   # Mock system fonts to only have Arial
   local_mocked_bindings(

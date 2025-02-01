@@ -10,20 +10,24 @@ test_that("aiddata_palettes contain the correct colors", {
   # Test default palette
   expect_equal(
     aiddata_palettes$default,
-    c(aiddata_colors$ad_wren_twilight,
+    c(
+      aiddata_colors$ad_wren_twilight,
       aiddata_colors$ad_vine,
       aiddata_colors$ad_patina,
       aiddata_colors$ad_spirit_gold,
-      aiddata_colors$ad_silver)
+      aiddata_colors$ad_silver
+    )
   )
 
   # Test sequential palette
   expect_equal(
     aiddata_palettes$sequential_green,
-    c(aiddata_colors$ad_griffin_green,
+    c(
+      aiddata_colors$ad_griffin_green,
       aiddata_colors$ad_college_woods,
       aiddata_colors$ad_patina,
-      aiddata_colors$ad_gray90)
+      aiddata_colors$ad_gray90
+    )
   )
 })
 
@@ -69,11 +73,13 @@ test_that("color scales handle reverse parameter", {
 
   # Test continuous scales
   scale_cont_default <- scale_color_aiddata("default",
-                                            reverse = FALSE,
-                                            discrete = FALSE)
+    reverse = FALSE,
+    discrete = FALSE
+  )
   scale_cont_reversed <- scale_color_aiddata("default",
-                                             reverse = TRUE,
-                                             discrete = FALSE)
+    reverse = TRUE,
+    discrete = FALSE
+  )
 
   cont_default_colors <- get_scale_colors(scale_cont_default)
   cont_reversed_colors <- get_scale_colors(scale_cont_reversed)
@@ -81,7 +87,6 @@ test_that("color scales handle reverse parameter", {
 })
 
 test_that("scales work with different ggplot2 versions", {
-
   # Skip this test on older R versions that don't have local_mocked_bindings
   if (!exists("local_mocked_bindings", asNamespace("testthat"))) {
     skip("local_mocked_bindings not available")

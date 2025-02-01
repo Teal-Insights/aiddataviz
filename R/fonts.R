@@ -1,6 +1,3 @@
-# R/fonts.R
-
-
 #' @importFrom ragg agg_png
 #' @importFrom dplyr filter mutate select
 #' @importFrom rlang .data
@@ -28,11 +25,10 @@ utils::globalVariables(c("family", "style", "path"))
 #'
 #' @details
 #' See [June Choe's blog post explaining this](
-#' https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/
-#' ).
-#' This function requires the user to have already downloaded the
-#' font on their computer, and to have set up `ragg` as described
-#' in the blog post.
+#'   https://yjunechoe.github.io/posts/
+#'   2021-06-24-setting-up-and-debugging-custom-fonts/). This function requires
+#' the user to have already downloaded the font on their computer, and to
+#' have set up `ragg` as described in the blog post.
 #'
 #' @param family_name name of the font family.
 #' @param silent do you want to suppress the message?
@@ -68,9 +64,9 @@ font_hoist <- function(family_name, silent = FALSE, check_only = FALSE) {
 
   # Step 1: Fetch all system fonts using the systemfonts package
   font_specs <- systemfonts::system_fonts() |>
-    dplyr::filter(family == family_name) |>
-    dplyr::mutate(family = paste(family, style)) |>
-    dplyr::select(plain = path, name = family)
+    dplyr::filter(.data$family == family_name) |>
+    dplyr::mutate(family = paste(.data$family, .data$style)) |>
+    dplyr::select(plain = .data$path, name = .data$family)
 
   # Step 2: Check if any fonts were found for the given family name
   if (nrow(font_specs) == 0) {
@@ -92,12 +88,15 @@ font_hoist <- function(family_name, silent = FALSE, check_only = FALSE) {
 
   # Step 3: Define a function to safely register a font
   safe_register_font <- function(plain, name) {
-    tryCatch({
-      systemfonts::register_font(plain = plain, name = name)
-      successful_fonts <<- c(successful_fonts, name)
-    }, error = function(e) {
-      failed_fonts <<- c(failed_fonts, name)
-    })
+    tryCatch(
+      {
+        systemfonts::register_font(plain = plain, name = name)
+        successful_fonts <<- c(successful_fonts, name)
+      },
+      error = function(e) {
+        failed_fonts <<- c(failed_fonts, name)
+      }
+    )
   }
 
   # Step 4: Register each font
@@ -152,7 +151,13 @@ font_hoist <- function(family_name, silent = FALSE, check_only = FALSE) {
 #' @param fallbacks Vector of fallback font families
 #' @return Name of first available font, or "sans" if none found
 #' @export
-get_available_font <- function(font_family, fallbacks = c("Arial", "Helvetica", "sans")) {
+get_available_font <- function(font_family,
+                               fallbacks =
+                                 c(
+                                   "Arial",
+                                   "Helvetica",
+                                   "sans"
+                                 )) {
   # Get all system fonts
   available_fonts <- unique(systemfonts::system_fonts()$family)
 
@@ -204,7 +209,13 @@ get_available_font <- function(font_family, fallbacks = c("Arial", "Helvetica", 
 #' @param fallbacks Character vector of fallback fonts
 #' @return A font family name that is available on the system
 get_font_family <- function(font_family,
-                            fallbacks = c("Arial", "Helvetica", "sans-serif", "sans")) {
+                            fallbacks =
+                              c(
+                                "Arial",
+                                "Helvetica",
+                                "sans-serif",
+                                "sans"
+                              )) {
   available_fonts <- unique(systemfonts::system_fonts()$family)
 
   # First try requested font

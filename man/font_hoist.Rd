@@ -23,11 +23,19 @@ Sometimes, even when fonts are loaded on a computer, they are not
 immediately available for use in R. This function fixes that.
 }
 \details{
-See \href{https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/}{June Choe's blog post explaining this}.
+See \link{June Choe's blog post explaining this}(
+}
+\section{nolint start}{
+https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/
+}
+
+\section{nolint end}{
+).
 This function requires the user to have already downloaded the
 font on their computer, and to have set up \code{ragg} as described
 in the blog post.
 }
+
 \examples{
 # load Roboto (must be loaded from Google Fonts on system already)
 font_hoist("Roboto")

@@ -1,5 +1,3 @@
-# tests/testthat/test-theme.R
-
 test_that("theme_aiddata returns valid ggplot2 theme", {
   # We need to capture both the warning and the theme
   expect_warning(
@@ -25,7 +23,7 @@ test_that("theme_aiddata handles map parameter", {
   # Check margins
   margin <- theme$plot.margin
   expect_s3_class(margin, "unit")
-  expect_equal(length(margin), 4)  # t, r, b, l
+  expect_equal(length(margin), 4) # t, r, b, l
   expect_equal(as.numeric(margin), c(0, 0, 0, 0))
 })
 
