@@ -1,6 +1,6 @@
 #' @importFrom ragg agg_png
 #' @importFrom dplyr filter mutate select
-#' @importFrom rlang .data
+#' @importFrom rlang .data %||%
 NULL
 
 # At the top of fonts.R
