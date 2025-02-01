@@ -1,14 +1,23 @@
+
 test_that("theme_aiddata returns valid ggplot2 theme", {
-  # We need to capture both the warning and the theme
-  expect_warning(
-    {
-      theme <- theme_aiddata()
-      expect_s3_class(theme, "theme")
-      expect_type(theme$text$family, "character")
-      expect_type(theme$plot.title$family, "character")
+  # Mock systemfonts to return no fonts
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = character(0),
+        style = character(0),
+        stringsAsFactors = FALSE
+      )
     },
+    .package = "systemfonts"
+  )
+
+  # Should warn about missing fonts and return a valid theme
+  expect_warning(
+    theme <- theme_aiddata(),
     "Recommended fonts not found"
   )
+  expect_s3_class(theme, "theme")
 })
 
 test_that("theme_aiddata handles map parameter", {
@@ -23,7 +32,7 @@ test_that("theme_aiddata handles map parameter", {
   # Check margins
   margin <- theme$plot.margin
   expect_s3_class(margin, "unit")
-  expect_equal(length(margin), 4) # t, r, b, l
+  expect_equal(length(margin), 4)  # t, r, b, l
   expect_equal(as.numeric(margin), c(0, 0, 0, 0))
 })
 

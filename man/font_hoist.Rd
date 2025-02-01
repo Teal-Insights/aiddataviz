@@ -11,8 +11,8 @@ font_hoist(family_name, silent = FALSE, check_only = FALSE)
 
 \item{silent}{do you want to suppress the message?}
 
-\item{check_only}{logical. If TRUE, only checks if fonts are available
-without attempting to register them.}
+\item{check_only}{logical. If TRUE, only checks if fonts
+are available without attempting to register them.}
 }
 \value{
 The function returns a message indicating whether the font
@@ -23,19 +23,11 @@ Sometimes, even when fonts are loaded on a computer, they are not
 immediately available for use in R. This function fixes that.
 }
 \details{
-See \link{June Choe's blog post explaining this}(
-}
-\section{nolint start}{
-https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/
-}
-
-\section{nolint end}{
-).
+See \href{https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/}{June Choe's blog post explaining this}.
 This function requires the user to have already downloaded the
 font on their computer, and to have set up \code{ragg} as described
 in the blog post.
 }
-
 \examples{
 # load Roboto (must be loaded from Google Fonts on system already)
 font_hoist("Roboto")

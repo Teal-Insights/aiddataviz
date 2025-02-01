@@ -24,16 +24,19 @@ utils::globalVariables(c("family", "style", "path"))
 #' immediately available for use in R. This function fixes that.
 #'
 #' @details
+# nolint start
 #' See [June Choe's blog post explaining this](
-#'   https://yjunechoe.github.io/posts/
-#'   2021-06-24-setting-up-and-debugging-custom-fonts/). This function requires
-#' the user to have already downloaded the font on their computer, and to
-#' have set up `ragg` as described in the blog post.
+#' https://yjunechoe.github.io/posts/2021-06-24-setting-up-and-debugging-custom-fonts/
+#' ).
+# nolint end
+#' This function requires the user to have already downloaded the
+#' font on their computer, and to have set up `ragg` as described
+#' in the blog post.
 #'
 #' @param family_name name of the font family.
 #' @param silent do you want to suppress the message?
-#' @param check_only logical. If TRUE, only checks if fonts are available
-#'   without attempting to register them.
+#' @param check_only logical. If TRUE, only checks if fonts
+#'   are available without attempting to register them.
 #'
 #' @return The function returns a message indicating whether the font
 #'   was successfully loaded or not.
@@ -49,24 +52,26 @@ utils::globalVariables(c("family", "style", "path"))
 font_hoist <- function(family_name, silent = FALSE, check_only = FALSE) {
   # Remove ANSI color codes or make them conditional
   # Only use colors when in an interactive terminal
+  # Use colors in interactive mode only
   use_colors <- interactive()
-
-  # Define color codes conditionally
   green <- if (use_colors) "\033[32m" else ""
   red <- if (use_colors) "\033[31m" else ""
   reset <- if (use_colors) "\033[0m" else ""
 
-  # Initialize vectors to track fonts that were and were not
-  # successfully registered
+  # Initialize vectors to track fonts
   successful_fonts <- c()
   failed_fonts <- c()
   already_loaded_fonts <- c()
 
-  # Step 1: Fetch all system fonts using the systemfonts package
+  # Get system fonts
   font_specs <- systemfonts::system_fonts() |>
-    dplyr::filter(.data$family == family_name) |>
-    dplyr::mutate(family = paste(.data$family, .data$style)) |>
-    dplyr::select(plain = .data$path, name = .data$family)
+    dplyr::filter(family == family_name) |>
+    dplyr::mutate(family = paste(family, style)) |>
+    dplyr::select(
+      # Use quoted names instead of .data pronoun
+      plain = "path",
+      name = "family"
+    )
 
   # Step 2: Check if any fonts were found for the given family name
   if (nrow(font_specs) == 0) {
@@ -232,4 +237,160 @@ get_font_family <- function(font_family,
 
   # Last resort - "sans"
   "sans"
+}
+
+#' Install AidData fonts
+#'
+#' Downloads and installs the fonts required for AidData themes
+#' (Roboto and Open Sans) from Google Fonts. This requires an internet
+#' connection and permission to install fonts on your system.
+#'
+#' @param force_reinstall If TRUE, will attempt to reinstall even
+#'   if fonts are present
+#' @return Logical indicating whether all fonts were successfully
+#'   installed
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' install_aiddata_fonts()
+#' }
+install_aiddata_fonts <- function(force_reinstall = FALSE) {
+  required_fonts <- c("Roboto", "Open Sans")
+  success <- TRUE
+
+  # Check if fonts are already installed
+  if (!force_reinstall && .check_fonts()) {
+    message("All required fonts are already installed.")
+    return(TRUE)
+  }
+
+  # Install each font if needed
+  for (font_name in required_fonts) {
+    if (force_reinstall || !font_name %in% systemfonts::system_fonts()$family) {
+      message("Installing ", font_name, "...")
+
+      # Try to install the font
+      font_success <- tryCatch({
+        # Use Google Fonts API - public key
+        api_key <- "AIzaSyDOr3jWLtl4IP08yNaddV61_40f0YByPHo"
+        api_url <- sprintf(
+          "https://www.googleapis.com/webfonts/v1/webfonts?key=%s&family=%s",
+          api_key,
+          gsub(" ", "+", font_name)
+        )
+
+        # Fetch font information
+        response <- jsonlite::fromJSON(api_url)
+
+        if (length(response$items) == 0) {
+          message("Font '", font_name, "' not found in Google Fonts")
+          FALSE
+        } else {
+          font_info <- response$items[1, ]
+
+          # Create temporary directory for downloads
+          temp_dir <- tempdir()
+          font_files <- c()
+
+          # Download each variant
+          for (variant in names(font_info$files)) {
+            url <- font_info$files[[variant]]
+            file_ext <- if (grepl("\\.ttf$", url)) ".ttf" else ".otf"
+            dest_path <- file.path(temp_dir, paste0(
+              gsub(" ", "_", font_name),
+              "_",
+              variant,
+              file_ext
+            ))
+
+            # Download the font file
+            download_success <- tryCatch({
+              utils::download.file(url, dest_path, mode = "wb", quiet = TRUE)
+              file.exists(dest_path) && file.size(dest_path) > 0
+            }, error = function(e) FALSE)
+
+            if (download_success) {
+              font_files <- c(font_files, dest_path)
+            }
+          }
+
+          # Install the font files
+          if (length(font_files) > 0) {
+            # Copy files to system font directory
+            font_dir <- switch(
+              Sys.info()[["sysname"]],
+              "Windows" = file.path(
+                Sys.getenv("LOCALAPPDATA"),
+                "Microsoft",
+                "Windows",
+                "Fonts"
+              ),
+              "Darwin" = "~/Library/Fonts",
+              "Linux" = "~/.local/share/fonts"
+            )
+
+            # Create directory if it doesn't exist
+            if (!dir.exists(font_dir)) {
+              dir.create(font_dir, recursive = TRUE)
+            }
+
+            # Copy each font file
+            for (file in font_files) {
+              file.copy(
+                file,
+                file.path(font_dir, basename(file)),
+                overwrite = TRUE
+              )
+            }
+
+            # Reset font cache
+            systemfonts::reset_font_cache()
+
+            # Clean up temp files
+            unlink(font_files)
+            TRUE
+          } else {
+            message(
+              "No font files were successfully downloaded for ",
+              font_name
+            )
+            FALSE
+          }
+        }
+      }, error = function(e) {
+        message(
+          "Error installing ",
+          font_name,
+          ": ",
+          conditionMessage(e)
+        )
+        FALSE
+      })
+
+      if (!font_success) {
+        success <- FALSE
+      }
+    }
+  }
+
+  if (success) {
+    message("\nAll fonts installed successfully. You may need to restart R ",
+            "for the fonts to be available.")
+  } else {
+    message("\nSome fonts could not be installed automatically. ",
+            "Please install them manually from Google Fonts:\n",
+            "- Roboto: https://fonts.google.com/specimen/Roboto\n",
+            "- Open Sans: https://fonts.google.com/specimen/Open+Sans")
+  }
+
+  invisible(success)
+}
+
+#' Check if required fonts are installed
+#' @keywords internal
+.check_fonts <- function() {
+  required_fonts <- c("Roboto", "Open Sans")
+  available <- unique(systemfonts::system_fonts()$family)
+  all(required_fonts %in% available)
 }

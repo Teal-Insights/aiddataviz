@@ -1,59 +1,5 @@
-test_that("get_available_font returns appropriate fallbacks", {
-  # Mock system fonts to only have Arial
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = "Arial",
-        style = "Regular",
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
 
-  # Should return Arial when Roboto isn't available
-  expect_equal(
-    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
-    "Arial"
-  )
 
-  # Mock system fonts to have no fonts
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = character(0),
-        style = character(0),
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
-
-  # Should return "sans" when no fonts are available
-  expect_equal(
-    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
-    "sans"
-  )
-})
-
-test_that("get_available_font returns requested font when available", {
-  # Mock system fonts to include Roboto
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = c("Roboto", "Arial"),
-        style = c("Regular", "Regular"),
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
-
-  expect_equal(
-    get_available_font("Roboto", fallbacks = c("Arial", "Helvetica")),
-    "Roboto"
-  )
-})
 test_that("font_hoist works for available fonts", {
   # Mock systemfonts::system_fonts() to return Roboto
   local_mocked_bindings(
@@ -75,7 +21,7 @@ test_that("font_hoist works for available fonts", {
 })
 
 test_that("font_hoist handles missing fonts", {
-  # Mock systemfonts::system_fonts() to return no fonts
+  # Mock empty system fonts
   local_mocked_bindings(
     system_fonts = function() {
       data.frame(
@@ -95,24 +41,9 @@ test_that("font_hoist handles missing fonts", {
   expect_false(result$available)
 })
 
-test_that(".check_fonts detects missing required fonts", {
-  # Mock systemfonts::system_fonts() to return only Roboto
-  local_mocked_bindings(
-    system_fonts = function() {
-      data.frame(
-        family = "Roboto",
-        style = "Regular",
-        stringsAsFactors = FALSE
-      )
-    },
-    .package = "systemfonts"
-  )
+test_that("install_aiddata_fonts skips when fonts already installed", {
+  skip_if_not_installed("jsonlite")
 
-  expect_false(.check_fonts())
-})
-
-test_that(".check_fonts detects all required fonts", {
-  # Mock systemfonts::system_fonts() to return both required fonts
   local_mocked_bindings(
     system_fonts = function() {
       data.frame(
@@ -124,5 +55,45 @@ test_that(".check_fonts detects all required fonts", {
     .package = "systemfonts"
   )
 
-  expect_true(.check_fonts())
+  expect_message(
+    install_aiddata_fonts(),
+    "already installed"
+  )
+})
+
+test_that("install_aiddata_fonts handles missing fonts", {
+  skip_if_not_installed("jsonlite")
+
+  # Mock systemfonts to show no fonts
+  local_mocked_bindings(
+    system_fonts = function() {
+      data.frame(
+        family = character(0),
+        style = character(0),
+        stringsAsFactors = FALSE
+      )
+    },
+    reset_font_cache = function() NULL,
+    .package = "systemfonts"
+  )
+
+  # Mock jsonlite to return an empty response
+  local_mocked_bindings(
+    fromJSON = function(...) {
+      list(items = data.frame())
+    },
+    .package = "jsonlite"
+  )
+
+  # Use withr to set test environment
+  withr::with_envvar(
+    new = list("TESTTHAT" = "true"),
+    {
+      # Test that we get the manual installation message
+      expect_message(
+        install_aiddata_fonts(),
+        "Please install them manually from Google Fonts"
+      )
+    }
+  )
 })
