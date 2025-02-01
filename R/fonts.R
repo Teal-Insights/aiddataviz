@@ -239,6 +239,176 @@ get_font_family <- function(font_family,
   "sans"
 }
 
+#' Download font information from Google Fonts API
+#' @param font_name Name of font to download
+#' @param api_key Google Fonts API key
+#' @return List containing font information or NULL if not found
+#' @keywords internal
+fetch_google_font_info <- function(
+    font_name,
+    api_key = "AIzaSyDOr3jWLtl4IP08yNaddV61_40f0YByPHo") {
+  api_url <- sprintf(
+    "https://www.googleapis.com/webfonts/v1/webfonts?key=%s&family=%s",
+    api_key,
+    gsub(" ", "+", font_name)
+  )
+
+  response <- tryCatch(
+    jsonlite::fromJSON(api_url),
+    error = function(e) NULL
+  )
+
+  if (is.null(response) || length(response$items) == 0) {
+    return(NULL)
+  }
+
+  response$items[1, ]
+}
+
+#' Download a single font variant
+#' @param url Font file URL
+#' @param dest_path Destination path
+#' @return TRUE if successful, FALSE otherwise
+#' @keywords internal
+download_font_variant <- function(url, dest_path) {
+  tryCatch({
+    utils::download.file(url, dest_path, mode = "wb", quiet = TRUE)
+    file.exists(dest_path) && file.size(dest_path) > 0
+  }, error = function(e) FALSE)
+}
+
+#' Download all variants of a font
+#' @param font_info Font information from Google Fonts
+#' @param font_name Name of the font
+#' @return Character vector of downloaded file paths
+#' @keywords internal
+download_font_variants <- function(font_info, font_name) {
+  temp_dir <- tempdir()
+  font_files <- character()
+
+  for (variant in names(font_info$files)) {
+    url <- font_info$files[[variant]]
+    file_ext <- if (grepl("\\.ttf$", url)) ".ttf" else ".otf"
+    dest_path <- file.path(temp_dir, paste0(
+      gsub(" ", "_", font_name),
+      "_",
+      variant,
+      file_ext
+    ))
+
+    if (download_font_variant(url, dest_path)) {
+      font_files <- c(font_files, dest_path)
+    }
+  }
+
+  font_files
+}
+
+#' Get system font directory
+#' @return Path to system font directory
+#' @keywords internal
+get_font_directory <- function() {
+  switch(Sys.info()[["sysname"]],
+    "Windows" = file.path(
+      Sys.getenv("LOCALAPPDATA"),
+      "Microsoft",
+      "Windows",
+      "Fonts"
+    ),
+    "Darwin" = "~/Library/Fonts",
+    "Linux" = "~/.local/share/fonts"
+  )
+}
+
+#' Install font files to system
+#' @param font_files Vector of font file paths
+#' @param font_dir Target font directory
+#' @return TRUE if successful, FALSE otherwise
+#' @keywords internal
+install_font_files <- function(font_files, font_dir) {
+  if (length(font_files) == 0) return(FALSE)
+
+  if (!dir.exists(font_dir)) {
+    dir.create(font_dir, recursive = TRUE)
+  }
+
+  success <- all(sapply(font_files, function(file) {
+    file.copy(file, file.path(font_dir, basename(file)), overwrite = TRUE)
+  }))
+
+  if (success) {
+    systemfonts::reset_font_cache()
+    unlink(font_files)
+  }
+
+  success
+}
+
+#' Install a single font
+#' @param font_name Name of the font to install
+#' @param font_dir Directory to install fonts to
+#' @param force_reinstall Whether to force reinstall
+#' @return List containing success status and any error message
+#' @keywords internal
+install_single_font <- function(font_name, font_dir, force_reinstall) {
+  if (!force_reinstall && font_name %in% systemfonts::system_fonts()$family) {
+    return(list(success = TRUE))
+  }
+
+  message("Installing ", font_name, "...")
+
+  # Get font info
+  font_info <- fetch_google_font_info(font_name)
+  if (is.null(font_info)) {
+    return(list(
+      success = FALSE,
+      message = paste("Font '", font_name, "' not found in Google Fonts")
+    ))
+  }
+
+  # Download variants
+  font_files <- download_font_variants(font_info, font_name)
+  if (length(font_files) == 0) {
+    return(list(
+      success = FALSE,
+      message = paste(
+        "No font files were successfully downloaded for",
+        font_name
+      )
+    ))
+  }
+
+  # Install files
+  if (!install_font_files(font_files, font_dir)) {
+    return(list(
+      success = FALSE,
+      message = paste("Failed to install", font_name)
+    ))
+  }
+
+  list(success = TRUE)
+}
+
+#' Format installation results message
+#' @param success Whether installation was successful
+#' @return A character string with the appropriate message
+#' @keywords internal
+format_installation_message <- function(success) {
+  if (success) {
+    paste0(
+      "\nAll fonts installed successfully. You may need to restart R ",
+      "for the fonts to be available."
+    )
+  } else {
+    paste0(
+      "\nSome fonts could not be installed automatically. ",
+      "Please install them manually from Google Fonts:\n",
+      "- Roboto: https://fonts.google.com/specimen/Roboto\n",
+      "- Open Sans: https://fonts.google.com/specimen/Open+Sans"
+    )
+  }
+}
+
 #' Install AidData fonts
 #'
 #' Downloads and installs the fonts required for AidData themes
@@ -257,7 +427,6 @@ get_font_family <- function(font_family,
 #' }
 install_aiddata_fonts <- function(force_reinstall = FALSE) {
   required_fonts <- c("Roboto", "Open Sans")
-  success <- TRUE
 
   # Check if fonts are already installed
   if (!force_reinstall && .check_fonts()) {
@@ -265,124 +434,26 @@ install_aiddata_fonts <- function(force_reinstall = FALSE) {
     return(TRUE)
   }
 
-  # Install each font if needed
-  for (font_name in required_fonts) {
-    if (force_reinstall || !font_name %in% systemfonts::system_fonts()$family) {
-      message("Installing ", font_name, "...")
+  # Get font directory
+  font_dir <- get_font_directory()
 
-      # Try to install the font
-      font_success <- tryCatch({
-        # Use Google Fonts API - public key
-        api_key <- "AIzaSyDOr3jWLtl4IP08yNaddV61_40f0YByPHo"
-        api_url <- sprintf(
-          "https://www.googleapis.com/webfonts/v1/webfonts?key=%s&family=%s",
-          api_key,
-          gsub(" ", "+", font_name)
-        )
+  # Install each font
+  results <- lapply(required_fonts, install_single_font,
+                    font_dir = font_dir,
+                    force_reinstall = force_reinstall)
 
-        # Fetch font information
-        response <- jsonlite::fromJSON(api_url)
+  # Check overall success and collect messages
+  success <- all(vapply(results, function(x) x$success, logical(1)))
+  messages <- vapply(results, function(x) x$message %||% "", character(1))
+  messages <- messages[messages != ""]
 
-        if (length(response$items) == 0) {
-          message("Font '", font_name, "' not found in Google Fonts")
-          FALSE
-        } else {
-          font_info <- response$items[1, ]
-
-          # Create temporary directory for downloads
-          temp_dir <- tempdir()
-          font_files <- c()
-
-          # Download each variant
-          for (variant in names(font_info$files)) {
-            url <- font_info$files[[variant]]
-            file_ext <- if (grepl("\\.ttf$", url)) ".ttf" else ".otf"
-            dest_path <- file.path(temp_dir, paste0(
-              gsub(" ", "_", font_name),
-              "_",
-              variant,
-              file_ext
-            ))
-
-            # Download the font file
-            download_success <- tryCatch({
-              utils::download.file(url, dest_path, mode = "wb", quiet = TRUE)
-              file.exists(dest_path) && file.size(dest_path) > 0
-            }, error = function(e) FALSE)
-
-            if (download_success) {
-              font_files <- c(font_files, dest_path)
-            }
-          }
-
-          # Install the font files
-          if (length(font_files) > 0) {
-            # Copy files to system font directory
-            font_dir <- switch(
-              Sys.info()[["sysname"]],
-              "Windows" = file.path(
-                Sys.getenv("LOCALAPPDATA"),
-                "Microsoft",
-                "Windows",
-                "Fonts"
-              ),
-              "Darwin" = "~/Library/Fonts",
-              "Linux" = "~/.local/share/fonts"
-            )
-
-            # Create directory if it doesn't exist
-            if (!dir.exists(font_dir)) {
-              dir.create(font_dir, recursive = TRUE)
-            }
-
-            # Copy each font file
-            for (file in font_files) {
-              file.copy(
-                file,
-                file.path(font_dir, basename(file)),
-                overwrite = TRUE
-              )
-            }
-
-            # Reset font cache
-            systemfonts::reset_font_cache()
-
-            # Clean up temp files
-            unlink(font_files)
-            TRUE
-          } else {
-            message(
-              "No font files were successfully downloaded for ",
-              font_name
-            )
-            FALSE
-          }
-        }
-      }, error = function(e) {
-        message(
-          "Error installing ",
-          font_name,
-          ": ",
-          conditionMessage(e)
-        )
-        FALSE
-      })
-
-      if (!font_success) {
-        success <- FALSE
-      }
-    }
+  # Print any error messages
+  if (length(messages) > 0) {
+    message(paste(messages, collapse = "\n"))
   }
 
-  if (success) {
-    message("\nAll fonts installed successfully. You may need to restart R ",
-            "for the fonts to be available.")
-  } else {
-    message("\nSome fonts could not be installed automatically. ",
-            "Please install them manually from Google Fonts:\n",
-            "- Roboto: https://fonts.google.com/specimen/Roboto\n",
-            "- Open Sans: https://fonts.google.com/specimen/Open+Sans")
-  }
+  # Print final status
+  message(format_installation_message(success))
 
   invisible(success)
 }
