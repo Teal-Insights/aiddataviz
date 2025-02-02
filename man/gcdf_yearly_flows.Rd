@@ -21,9 +21,10 @@ AidData's Global Chinese Development Finance Dataset, Version 3.0
 gcdf_yearly_flows
 }
 \description{
-A time series dataset containing annual Chinese development finance commitments
-broken down by flow class (e.g., ODA-like, OOF-like, etc.) from the Global
-Chinese Development Finance Dataset 3.0. Values are in constant 2021 USD.
+A time series dataset containing annual Chinese development finance
+commitments broken down by flow class (e.g., ODA-like, OOF-like, etc.) from
+the Global Chinese Development Finance Dataset 3.0. Values are in constant
+2021 USD.
 }
 \examples{
 # Get total commitments by flow class

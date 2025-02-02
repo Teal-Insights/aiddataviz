@@ -1,21 +1,34 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# aiddataviz <a href="https://teal-insights.github.io/aiddataviz/"><img src="man/figures/logo.png" align="right" height="139" alt="aiddataviz website" /></a>
+# aiddataviz <a href="https://teal-insights.github.io/aiddataviz/"><img src="man/figures/logo.png" alt="aiddataviz website" align="right" height="139"/></a>
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Teal-Insights/aiddataviz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Teal-Insights/aiddataviz/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/Teal-Insights/aiddataviz/graph/badge.svg)](https://app.codecov.io/gh/Teal-Insights/aiddataviz)
+
 <!-- badges: end -->
 
 ## Overview
 
 aiddataviz is a ggplot2 extension package that implements William &
-Mary’s brand guidelines for AidData visualizations. It provides
-carefully crafted themes, color palettes, and helper functions to create
-beautiful, accessible, and on-brand data visualizations.
+Mary’s brand guidelines for AidData visualizations. It provides themes,
+color palettes, and helper functions to create beautiful, accessible,
+and on-brand data visualizations.
+
+This package was created by [Teal Emery](https://www.tealemery.com/) as
+part of an [applied data analysis
+course](https://teal-insights.github.io/data_analysis_for_chinese_debt_data/)
+for AidData staff. While it is intended for use by AidData, it is not an
+official AidData product.
+
+***NOTE: aiddataviz is brand new and still under heavy development. With
+your feedback, we can make this an awesome tool. Please understand it is
+a work in progress, and will likely have breaking changes (the code that
+works today, may not work tomorrow) in the coming weeks as it is
+finalized.***
 
 ## Installation
 
@@ -55,14 +68,6 @@ publications:
 library(aiddataviz)
 library(ggplot2)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 
 # Create a stacked bar chart of Chinese development finance flows
 ggplot(gcdf_yearly_flows, 
@@ -84,73 +89,135 @@ ggplot(gcdf_yearly_flows,
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
-You can also create more complex visualizations. Here’s an example using
-multiple AidData color palettes:
+# Color Palettes
+
+The package provides several color palettes based on William & Mary’s
+brand guidelines, designed for different visualization needs:
+
+***Note: These palettes were developed based on William & Mary’s brand
+guidelines and analysis of AidData’s publications. They can and should
+be adjusted based on feedback from the AidData communications team.***
+
+## Categorical Palettes
+
+### Default (Three Colors)
+
+The default palette uses AidData’s three primary colors: Wren Twilight
+blue, Spirit Gold, and Silver. This palette is ideal for categorical
+data with three groups and matches the style commonly used in AidData’s
+publications.
 
 ``` r
-# Calculate and plot average commitment size by region
-gcdf_country_commitments |>
-  group_by(region_name) |>
-  summarize(
-    total_commitments = sum(total_commitments_bn),
-    n_countries = n(),
-    avg_commitment = total_commitments / n_countries
-  ) |>
-  ggplot(aes(x = reorder(region_name, avg_commitment), 
-             y = avg_commitment,
-             fill = avg_commitment)) +
-  geom_col() +
-  coord_flip() +
-  labs(
-    title = "Average Chinese Development Finance Commitments by Region",
-    subtitle = "Total commitments divided by number of recipient countries",
-    x = NULL,
-    y = "Average Commitment per Country (USD Billions)",
-    caption = "Source: AidData GCDF 3.0"
-  ) +
-  scale_fill_aiddata(
-    palette = "sequential_green", 
-    discrete = FALSE,
-    guide = "none"
-  ) +
-  theme_aiddata()
+library(monochromeR)
+aiddata_palettes$default |> view_palette()
 ```
 
-<img src="man/figures/README-regions-1.png" width="100%" />
+<img src="man/figures/README-default-palette-1.png" width="100%" />
 
-The package includes several color palettes optimized for different
-visualization needs:
+### One Color
+
+For single-variable visualizations, we use Wren Twilight blue, William &
+Mary’s signature color.
 
 ``` r
-library(patchwork)
-
-# Helper function to show palettes
-show_pal <- function(pal_name) {
-  ggplot() +
-    geom_tile(
-      aes(x = 1:5, y = 1, fill = factor(1:5))
-    ) +
-    scale_fill_aiddata(palette = pal_name) +
-    labs(title = pal_name) +
-    theme_void() +
-    theme(
-      legend.position = "none",
-      plot.title = element_text(hjust = 0.5)
-    )
-}
-
-# Show all palettes
-wrap_plots(
-  show_pal("default"),
-  show_pal("sequential_green"),
-  show_pal("sequential_gold"),
-  show_pal("diverging_green_gold"),
-  show_pal("diverging_vine_sky"),
-  ncol = 2
-)
+aiddata_palettes$one_color |> view_palette()
 ```
 
-<img src="man/figures/README-palettes-1.png" width="100%" />
+<img src="man/figures/README-one-color-1.png" width="100%" />
+
+### Two Colors
+
+Combines Wren Twilight blue and Spirit Gold for binary categorical data.
+
+``` r
+aiddata_palettes$two_colors |> view_palette()
+```
+
+<img src="man/figures/README-two-colors-1.png" width="100%" />
+
+### Three Colors
+
+Same as the default palette, provided for explicit naming consistency.
+
+``` r
+aiddata_palettes$three_colors |> view_palette()
+```
+
+<img src="man/figures/README-three-colors-1.png" width="100%" />
+
+### Four Colors
+
+Adds Patina to the three-color palette for visualizations requiring
+additional categories.
+
+``` r
+aiddata_palettes$four_colors |> view_palette()
+```
+
+<img src="man/figures/README-four-colors-1.png" width="100%" />
+
+### Five Colors
+
+Incorporates Vine as the fifth color, completing the primary color set.
+
+``` r
+aiddata_palettes$five_colors |> view_palette()
+```
+
+<img src="man/figures/README-five-colors-1.png" width="100%" />
+
+## Sequential Palettes
+
+### Sequential Green
+
+A gradient from Griffin Green through College Woods and Patina to light
+gray. Ideal for ordered data where darker values indicate higher
+intensity.
+
+``` r
+aiddata_palettes$sequential_green |> view_palette()
+```
+
+<img src="man/figures/README-sequential-green-1.png" width="100%" />
+
+### Sequential Gold
+
+A gradient from Spirit Gold through Colonial Yellow to light gray.
+Provides an alternative to the green sequence that maintains AidData’s
+visual identity.
+
+``` r
+aiddata_palettes$sequential_gold |> view_palette()
+```
+
+<img src="man/figures/README-sequential-gold-1.png" width="100%" />
+
+## Diverging Palettes
+
+### Diverging Green-Gold
+
+A diverging palette centered on silver, moving from Griffin Green
+through Patina on one end to Colonial Yellow and Spirit Gold on the
+other. Ideal for data with meaningful center points or positive/negative
+values.
+
+``` r
+aiddata_palettes$diverging_green_gold |> view_palette()
+```
+
+<img src="man/figures/README-diverging-green-gold-1.png" width="100%" />
+
+### Diverging Vine-Sky
+
+An alternative diverging palette using Vine through Weathered Brick to
+College Sky. Useful when you want to avoid green/gold associations or
+need a different visual emphasis.
+
+``` r
+aiddata_palettes$diverging_vine_sky |> view_palette()
+```
+
+<img src="man/figures/README-diverging-vine-sky-1.png" width="100%" />
 
 ## Learn More
 

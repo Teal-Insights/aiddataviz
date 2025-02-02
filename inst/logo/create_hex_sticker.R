@@ -5,9 +5,6 @@ library(showtext)
 library(dplyr)
 
 # Add Google fonts
-# font_add_google("Roboto", "Roboto")
-# showtext_auto()
-font_hoist("Roboto")
 
 # Create bar chart with proper factor levels
 p <- ggplot(gcdf_yearly_flows,
