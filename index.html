@@ -13,6 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Data Visualization Themes and Tools for AidData">
 <meta name="description" content="Provides tools, themes, and color palettes for creating consistent, accessible, and on-brand data visualizations using ggplot2. Built for AidData at the College of William &amp; Mary, this package implements the official William &amp; Mary brand guidelines while adhering to data visualization best practices. Features include custom ggplot2 themes, color palettes optimized for accessibility, and functions for creating publication-ready visualizations.">
 <meta property="og:description" content="Provides tools, themes, and color palettes for creating consistent, accessible, and on-brand data visualizations using ggplot2. Built for AidData at the College of William &amp; Mary, this package implements the official William &amp; Mary brand guidelines while adhering to data visualization best practices. Features include custom ggplot2 themes, color palettes optimized for accessibility, and functions for creating publication-ready visualizations.">
+<meta property="og:image" content="https://teal-insights.github.io/aiddataviz/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -46,11 +47,21 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="aiddataviz">aiddataviz<a class="anchor" aria-label="anchor" href="#aiddataviz"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="aiddataviz-">aiddataviz 
+<a class="anchor" aria-label="anchor" href="#aiddataviz-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
-<p>The goal of aiddataviz is to …</p>
+<!-- badges: end -->
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>aiddataviz is a ggplot2 extension package that implements William &amp; Mary’s brand guidelines for AidData visualizations. It provides themes, color palettes, and helper functions to create beautiful, accessible, and on-brand data visualizations.</p>
+<p>This package was created by <a href="https://www.tealemery.com/" class="external-link">Teal Emery</a> as part of an <a href="https://teal-insights.github.io/data_analysis_for_chinese_debt_data/" class="external-link">applied data analysis course</a> for AidData staff. While it is intended for use by AidData, it is not an official AidData product.</p>
+<p><strong><em>NOTE: aiddataviz is brand new and still under heavy development. With your feedback, we can make this an awesome tool. Please understand it is a work in progress, and will likely have breaking changes (the code that works today, may not work tomorrow) in the coming weeks as it is finalized.</em></strong></p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -58,30 +69,156 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"Teal-Insights/aiddataviz"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="fonts">Fonts<a class="anchor" aria-label="anchor" href="#fonts"></a>
+</h3>
+<p>When you load the <code>aiddataviz</code> package with <code><a href="https://github.com/Teal-Insights/aiddataviz" class="external-link">library(aiddataviz)</a></code>, you will be prompted to install the required fonts (<code>Roboto</code> and <code>Open Sans</code>) automatically. Simply type <code>y</code> and press enter to install them.</p>
+<p>If you’d prefer to install the fonts manually, you can get them from <a href="https://fonts.google.com/" class="external-link">Google Fonts</a>: - <a href="https://fonts.google.com/specimen/Roboto" class="external-link">Roboto</a> - <a href="https://fonts.google.com/specimen/Open+Sans" class="external-link">Open Sans</a></p>
+<p>On Windows, custom system fonts may be unavailable to the default RMarkdown rendering engine. If you’re having trouble, try setting <code>dev = "ragg_png"</code> in your RMarkdown chunk options. For example, add <code>knitr::opts_chunk$set(dev = "ragg_png")</code> to the top of your RMarkdown file.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
+<p>Here’s a basic example showing how to use aiddataviz themes and color scales to create visualizations in the style of AidData’s research publications:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#. Load library</span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
-<p>What is special about using <code>README.Rmd</code> instead of just <code>README.md</code>? You can include R chunks like so:</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Teal-Insights/aiddataviz" class="external-link">aiddataviz</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create a stacked bar chart of Chinese development finance flows</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gcdf_yearly_flows</span>, </span>
+<span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">commitment_year</span>, </span>
+<span>           y <span class="op">=</span> <span class="va">commitments_bn</span>,</span>
+<span>           fill <span class="op">=</span> <span class="va">flow_class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Chinese Official Finance Flows to Developing Countries"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"Annual commitments by flow class, 2000-2021"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Year"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"USD Billions (2021)"</span>,</span>
+<span>    fill <span class="op">=</span> <span class="st">"Flow Class"</span>,</span>
+<span>    caption <span class="op">=</span> <span class="st">"Source: AidData's Global Chinese Development Finance Dataset, Version 3.0"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="reference/scale_color_aiddata.html">scale_fill_aiddata</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"default"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="reference/theme_aiddata.html">theme_aiddata</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-example-1.png" width="100%"></p>
+</div>
+</div>
+<div class="section level1">
+<h1 id="color-palettes">Color Palettes<a class="anchor" aria-label="anchor" href="#color-palettes"></a>
+</h1>
+<p>The package provides several color palettes based on William &amp; Mary’s brand guidelines, designed for different visualization needs:</p>
+<p><strong><em>Note: These palettes were developed based on William &amp; Mary’s brand guidelines and analysis of AidData’s publications. They can and should be adjusted based on feedback from the AidData communications team.</em></strong></p>
+<div class="section level2">
+<h2 id="categorical-palettes">Categorical Palettes<a class="anchor" aria-label="anchor" href="#categorical-palettes"></a>
+</h2>
+<div class="section level3">
+<h3 id="default-three-colors">Default (Three Colors)<a class="anchor" aria-label="anchor" href="#default-three-colors"></a>
+</h3>
+<p>The default palette uses AidData’s three primary colors: Wren Twilight blue, Spirit Gold, and Silver. This palette is ideal for categorical data with three groups and matches the style commonly used in AidData’s publications.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      speed           dist       </span></span>
-<span><span class="co">#&gt;  Min.   : 4.0   Min.   :  2.00  </span></span>
-<span><span class="co">#&gt;  1st Qu.:12.0   1st Qu.: 26.00  </span></span>
-<span><span class="co">#&gt;  Median :15.0   Median : 36.00  </span></span>
-<span><span class="co">#&gt;  Mean   :15.4   Mean   : 42.98  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  </span></span>
-<span><span class="co">#&gt;  Max.   :25.0   Max.   :120.00</span></span></code></pre></div>
-<p>You’ll still need to render <code>README.Rmd</code> regularly, to keep <code>README.md</code> up-to-date. <code>devtools::build_readme()</code> is handy for this.</p>
-<p>You can also embed plots, for example:</p>
-<p><img src="reference/figures/README-pressure-1.png" width="100%"></p>
-<p>In that case, don’t forget to commit and push the resulting figure files, so they display on GitHub and CRAN.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/cararthompson/monochromeR" class="external-link">monochromeR</a></span><span class="op">)</span></span>
+<span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">default</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-default-palette-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="one-color">One Color<a class="anchor" aria-label="anchor" href="#one-color"></a>
+</h3>
+<p>For single-variable visualizations, we use Wren Twilight blue, William &amp; Mary’s signature color.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">one_color</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-one-color-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="two-colors">Two Colors<a class="anchor" aria-label="anchor" href="#two-colors"></a>
+</h3>
+<p>Combines Wren Twilight blue and Spirit Gold for binary categorical data.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">two_colors</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-two-colors-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="three-colors">Three Colors<a class="anchor" aria-label="anchor" href="#three-colors"></a>
+</h3>
+<p>Same as the default palette, provided for explicit naming consistency.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">three_colors</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-three-colors-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="four-colors">Four Colors<a class="anchor" aria-label="anchor" href="#four-colors"></a>
+</h3>
+<p>Adds Patina to the three-color palette for visualizations requiring additional categories.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">four_colors</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-four-colors-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="five-colors">Five Colors<a class="anchor" aria-label="anchor" href="#five-colors"></a>
+</h3>
+<p>Incorporates Vine as the fifth color, completing the primary color set.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">five_colors</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-five-colors-1.png" width="100%"></p>
 </div>
 </div>
+<div class="section level2">
+<h2 id="sequential-palettes">Sequential Palettes<a class="anchor" aria-label="anchor" href="#sequential-palettes"></a>
+</h2>
+<div class="section level3">
+<h3 id="sequential-green">Sequential Green<a class="anchor" aria-label="anchor" href="#sequential-green"></a>
+</h3>
+<p>A gradient from Griffin Green through College Woods and Patina to light gray. Ideal for ordered data where darker values indicate higher intensity.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">sequential_green</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-sequential-green-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="sequential-gold">Sequential Gold<a class="anchor" aria-label="anchor" href="#sequential-gold"></a>
+</h3>
+<p>A gradient from Spirit Gold through Colonial Yellow to light gray. Provides an alternative to the green sequence that maintains AidData’s visual identity.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">sequential_gold</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-sequential-gold-1.png" width="100%"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="diverging-palettes">Diverging Palettes<a class="anchor" aria-label="anchor" href="#diverging-palettes"></a>
+</h2>
+<div class="section level3">
+<h3 id="diverging-green-gold">Diverging Green-Gold<a class="anchor" aria-label="anchor" href="#diverging-green-gold"></a>
+</h3>
+<p>A diverging palette centered on silver, moving from Griffin Green through Patina on one end to Colonial Yellow and Spirit Gold on the other. Ideal for data with meaningful center points or positive/negative values.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">diverging_green_gold</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-diverging-green-gold-1.png" width="100%"></p>
+</div>
+<div class="section level3">
+<h3 id="diverging-vine-sky">Diverging Vine-Sky<a class="anchor" aria-label="anchor" href="#diverging-vine-sky"></a>
+</h3>
+<p>An alternative diverging palette using Vine through Weathered Brick to College Sky. Useful when you want to avoid green/gold associations or need a different visual emphasis.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aiddata_palettes</span><span class="op">$</span><span class="va">diverging_vine_sky</span> <span class="op">|&gt;</span> <span class="fu">view_palette</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-diverging-vine-sky-1.png" width="100%"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="learn-more">Learn More<a class="anchor" aria-label="anchor" href="#learn-more"></a>
+</h2>
+<ul>
+<li><a href="https://teal-insights.github.io/aiddataviz/">Package website</a></li>
+<li><a href="https://www.wm.edu/about/brandguidelines/" class="external-link">William &amp; Mary Brand Guidelines</a></li>
+<li><a href="https://www.aiddata.org/" class="external-link">AidData</a></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
+<p>Please note that the aiddataviz project is released with a <a href="https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+</div>
+</div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
