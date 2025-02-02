@@ -4,11 +4,11 @@
 \name{aiddata_colors}
 \alias{aiddata_colors}
 \alias{aiddata_palettes}
-\title{AidData color system based on William & Mary brand guidelines}
+\title{AidData Colors and Palettes}
 \format{
 An object of class \code{list} of length 18.
 
-An object of class \code{list} of length 6.
+An object of class \code{list} of length 10.
 }
 \usage{
 aiddata_colors
@@ -16,6 +16,84 @@ aiddata_colors
 aiddata_palettes
 }
 \description{
-AidData color system based on William & Mary brand guidelines
+A comprehensive color system based on William & Mary's brand guidelines.
+The colors are organized into primary, secondary/tertiary, and neutral groups.
+See \url{https://brand.wm.edu/index.php/university-colors/} for the original
+brand guidelines.
+}
+\section{Colors}{
+
+Colors are organized into groups:
+\itemize{
+\item Primary Colors:
+\itemize{
+\item Wren Twilight (\code{wren_twilight}): Deep navy blue (#00313C)
+\item Vine (\code{vine}): Rich burgundy (#84344E)
+\item Patina (\code{patina}): Vibrant teal (#00B388)
+\item Spirit Gold (\code{spirit_gold}): Bright gold (#F0B323)
+\item Silver (\code{silver}): Light gray (#D0DED4)
+}
+\item Secondary & Tertiary Colors:
+\itemize{
+\item Colonial Yellow (\code{colonial_yellow}): Muted gold (#CAB64B)
+\item College Sky (\code{college_sky}): Light blue (#64CCC9)
+\item Weathered Brick (\code{weathered_brick}): Coral red (#E56A54)
+\item Moss (\code{moss}): Olive green (#789D4A)
+\item College Woods (\code{college_woods}): Sage green (#789F90)
+\item Slate (\code{slate}): Medium gray (#5B6770)
+\item Griffin Green (\code{griffin_green}): Deep forest green (#183028)
+}
+\item Neutral Grays:
+\itemize{
+\item Gray 90-10: A range of grays from light to dark
+\item NA Color (\code{na_color}): Special gray for missing values
+}
+}
+}
+
+\section{Palettes}{
+
+Several pre-defined palettes are available:
+\itemize{
+\item Categorical Palettes:
+\itemize{
+\item \code{default}: Three primary colors (Wren Twilight, Spirit Gold, Silver)
+\item \code{one_color}: Single color (Wren Twilight)
+\item \code{two_colors}: Two colors (Wren Twilight, Spirit Gold)
+\item \code{three_colors}: Same as default
+\item \code{four_colors}: Adds Patina to three_colors
+\item \code{five_colors}: Adds Vine to four_colors
+}
+\item Sequential Palettes:
+\itemize{
+\item \code{sequential_green}: Griffin Green to Gray90
+\item \code{sequential_gold}: Spirit Gold to Gray90
+}
+\item Diverging Palettes:
+\itemize{
+\item \code{diverging_green_gold}: Griffin Green to Spirit Gold
+\item \code{diverging_vine_sky}: Vine to College Sky
+}
+}
+}
+
+\examples{
+# Access individual colors
+aiddata_colors$wren_twilight
+aiddata_colors$spirit_gold
+
+# Use with ggplot2
+library(ggplot2)
+
+# Categorical data with default palette
+ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point() +
+  scale_color_aiddata()
+
+# Sequential data
+ggplot(mtcars, aes(wt, mpg, color = disp)) +
+  geom_point() +
+  scale_color_aiddata(palette = "sequential_green", discrete = FALSE)
+
 }
 \keyword{datasets}

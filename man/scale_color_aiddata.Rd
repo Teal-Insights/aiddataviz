@@ -3,34 +3,59 @@
 \name{scale_color_aiddata}
 \alias{scale_color_aiddata}
 \alias{scale_fill_aiddata}
-\title{Create AidData color scales}
+\title{Create AidData color scales for ggplot2}
 \usage{
 scale_color_aiddata(palette = "default", reverse = FALSE, discrete = TRUE, ...)
 
 scale_fill_aiddata(palette = "default", reverse = FALSE, discrete = TRUE, ...)
 }
 \arguments{
-\item{palette}{The name of the palette to use. Options are:
-"default", "alt", "sequential_green", "sequential_gold",
-"diverging_green_gold", "diverging_vine_sky"}
+\item{palette}{The name of the palette to use:
+\itemize{
+\item \code{"default"}, \code{"one_color"} through \code{"five_colors"}:
+Categorical palettes with 1-5 colors
+\item \code{"sequential_green"}, \code{"sequential_gold"}: For ordered data
+\item \code{"diverging_green_gold"}, \code{"diverging_vine_sky"}: For data
+with meaningful center point
+}}
 
-\item{reverse}{Boolean indicating whether to reverse the palette}
+\item{reverse}{Boolean indicating whether to reverse the palette order}
 
-\item{discrete}{Boolean indicating whether the scale is discrete or
-continuous}
+\item{discrete}{Boolean indicating whether the scale is discrete (TRUE) or
+continuous (FALSE)}
 
 \item{...}{Additional arguments passed to discrete_scale() or
 scale_color_gradientn()}
 }
 \value{
-A ggplot2 color scale
+A ggplot2 color or fill scale
 }
 \description{
-Create AidData color scales
+Functions to create color and fill scales using AidData's color palettes. These
+functions implement William & Mary's brand guidelines in a way that works well
+for data visualization.
 }
 \examples{
 library(ggplot2)
+
+# Basic usage with default palette (3 colors)
 ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point() +
-  scale_color_aiddata("default")
+  scale_color_aiddata()
+
+# Using specific number of colors
+ggplot(mtcars, aes(wt, mpg, color = factor(gear))) +
+  geom_point() +
+  scale_color_aiddata(palette = "two_colors")
+
+# Sequential palette for continuous data
+ggplot(mtcars, aes(wt, mpg, color = disp)) +
+  geom_point() +
+  scale_color_aiddata(palette = "sequential_green", discrete = FALSE)
+
+# Fill scale with diverging palette
+ggplot(mtcars, aes(factor(cyl), fill = factor(gear))) +
+  geom_bar() +
+  scale_fill_aiddata(palette = "diverging_green_gold")
+
 }

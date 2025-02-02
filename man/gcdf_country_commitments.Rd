@@ -11,8 +11,8 @@ A data frame with approximately 150 rows and 8 variables:
 \item{iso3c}{Character. ISO 3-letter country code}
 \item{total_commitments_bn}{Numeric. Total Chinese development finance
 commitments in billions of constant 2021 USD}
-\item{weighted_interest_rate}{Numeric. Weighted average interest rate across
-all loans, weighted by commitment amount}
+\item{weighted_interest_rate}{Numeric. Weighted average interest rate
+across all loans, weighted by commitment amount}
 \item{region_name}{Character. World Bank geographic region}
 \item{income_level_name}{Character. World Bank income group classification}
 \item{gdp_usd_bn}{Numeric. Nominal GDP in billions of USD (2021)}
@@ -33,12 +33,12 @@ Development Indicators}
 gcdf_country_commitments
 }
 \description{
-A dataset containing Chinese development finance commitments and related country
-characteristics derived from the Global Chinese Development Finance (GCDF)
-Dataset 3.0, World Bank World Development Indicators, and IMF World Economic
-Outlook data. The dataset includes total commitments, weighted average interest
-rates, and key country characteristics like GDP, population, region and income
-group.
+A dataset containing Chinese development finance commitments and related
+country characteristics derived from the Global Chinese Development Finance
+(GCDF) Dataset 3.0, World Bank World Development Indicators, and IMF World
+Economic Outlook data. The dataset includes total commitments, weighted
+average interest rates, and key country characteristics like GDP, population,
+region and income group.
 }
 \examples{
 # Get top 10 recipients by commitment amount
